@@ -13,12 +13,13 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Pedido.belongsTo(models.Cliente);
       Pedido.belongsToMany(models.Servico,{
-        through:'ItemPedido'
+        through: 'ItemPedido'
       });
     }
   };
   Pedido.init({
-    dataPedido: DataTypes.DATEONLY    
+    dataPedido: DataTypes.DATEONLY
+    
   }, {
     sequelize,
     modelName: 'Pedido',

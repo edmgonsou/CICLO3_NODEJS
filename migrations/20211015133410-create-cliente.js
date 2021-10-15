@@ -13,7 +13,7 @@ module.exports = {
       },
       endereco: {
         type: Sequelize.STRING
-      },
+      },      
       cidade: {
         type: Sequelize.STRING
       },

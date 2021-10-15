@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
   };
   ItemPedido.init({
     quantidade: DataTypes.INTEGER,
-    valor: DataTypes.FLOAT    
+    valor: DataTypes.FLOAT
+    
   }, {
     sequelize,
     modelName: 'ItemPedido',
