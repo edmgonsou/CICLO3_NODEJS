@@ -1,5 +1,5 @@
 const express = require('express');
-const {Sequelize} = require('./models');
+const { Sequelize } = require('./models');
 const cors = require('cors');
 
 const models = require('./models');
@@ -13,7 +13,7 @@ let itempedido = models.ItemPedido;
 let pedido = models.Pedido;
 let servico = models.Servico;
 
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
     res.send('Olá, mundo')
 });
 
@@ -39,30 +39,30 @@ app.get('/', function(req, res){
 //     res.send('Pedido inserido com sucesso!');
 // });
 
-app.post('/servicos', async(req, res)=>{
+app.post('/servicos', async (req, res) => {
     await servico.create(
-        req.body        
-    ).then(function(){
+        req.body
+    ).then(function () {
         return res.json({
             error: false,
             message: 'Serviço criado com sucesso!'
         })
-    }).catch(function(error){
+    }).catch(function (error) {
         return res.status(400).json({
             error: true,
             message: 'Foi impossivel se conectar!'
         })
-    });    
+    });
 });
-app.post('/clientes', async(req, res)=>{
+app.post('/clientes', async (req, res) => {
     await cliente.create(
         req.body
-    ).then(function(){
+    ).then(function () {
         return res.json({
             error: false,
             message: "O cliente foi inserido com sucesso"
         });
-    }).catch(function(error){
+    }).catch(function (error) {
         return res.status(400).json({
             error: true,
             message: "Não foi possivel cadastrar o cliente "
@@ -70,13 +70,13 @@ app.post('/clientes', async(req, res)=>{
     });
 });
 
-app.post('/cliente/:id/pedido', async(req, res)=>{
+app.post('/cliente/:id/pedido', async (req, res) => {
     const ped = {
         dataPedido: req.body,
         ClienteId: req.params.id
     };
-    
-    if(!await cliente.findByPk(req.params.id)){
+
+    if (!await cliente.findByPk(req.params.id)) {
         return res.status(400).json({
             error: true,
             message: "Cliente não existe."
@@ -84,29 +84,29 @@ app.post('/cliente/:id/pedido', async(req, res)=>{
     };
 
     await pedido.create(ped)
-    .then(order=>{
-        return res.json({
-            error: false,
-            message: "O pedido foi inserido com sucesso.",
-            order
+        .then(order => {
+            return res.json({
+                error: false,
+                message: "O pedido foi inserido com sucesso.",
+                order
+            });
+        }).catch(error => {
+            return res.status(400).json({
+                error: true,
+                message: "Não foi possível inserir o pedido."
+            });
         });
-    }).catch(error=>{
-        return res.status(400).json({
-            error: true,
-            message: "Não foi possível inserir o pedido."
-        });
-    });   
 });
 
-app.post('/itempedido', async(req, res)=>{
+app.post('/itempedido', async (req, res) => {
     await itempedido.create(
         req.body
-    ).then(function(){
+    ).then(function () {
         return res.json({
             error: false,
             message: "O itempedido foi inserido com sucesso."
         });
-    }).catch(function(error){
+    }).catch(function (error) {
         return res.status(400).json({
             error: true,
             message: "Não foi possível inserir o item."
@@ -114,74 +114,74 @@ app.post('/itempedido', async(req, res)=>{
     });
 });
 
-app.get('/consultaservicos', async(req, res)=>{
+app.get('/consultaservicos', async (req, res) => {
     await servico.findAll({
         //raw: true
         order: [['nome', 'ASC']]
-    }).then(function(servicos){
+    }).then(function (servicos) {
         res.json(servicos)
     });
 });
 
-app.get('/ofertaservicos', async(req, res)=>{
-    await servico.count('id').then(function(servicos){
-        res.json({servicos});
+app.get('/ofertaservicos', async (req, res) => {
+    await servico.count('id').then(function (servicos) {
+        res.json({ servicos });
     });
 });
 
-app.get('/servico/:id', async(req, res)=>{
+app.get('/servico/:id', async (req, res) => {
     await servico.findByPk(req.params.id)
-    .then(serv=>{
-        return res.json({
-            error: false,
-            serv
+        .then(serv => {
+            return res.json({
+                error: false,
+                serv
+            });
+        }).catch(function (erro) {
+            return res.status(400).json({
+                error: true,
+                message: "Não foi possível conectar."
+            });
         });
-    }).catch(function(erro){
-        return res.status(400).json({
-            error: true,
-            message: "Não foi possível conectar."
-        });
-    });
 });
 
-app.get('/consultaclientes', async(req, res)=>{
+app.get('/consultaclientes', async (req, res) => {
     await cliente.findAll({
         //raw: true
-        order:[['nascimento','ASC']]        
-    }).then(function(clientes){
+        order: [['nascimento', 'ASC']]
+    }).then(function (clientes) {
         res.json(clientes)
     });
 });
 
-app.get('/quantclientes', async(req, res)=>{
-    await cliente.count('id').then(function(clientes){
-        res.json({clientes});
+app.get('/quantclientes', async (req, res) => {
+    await cliente.count('id').then(function (clientes) {
+        res.json({ clientes });
     });
 });
-app.get('/quantpedidos', async(req, res)=>{
-    await pedido.count('id').then(function(pedidos){
-        res.json({pedidos});
+app.get('/quantpedidos', async (req, res) => {
+    await pedido.count('id').then(function (pedidos) {
+        res.json({ pedidos });
     });
 });
 
-app.get('/consultapedidos', async(req, res)=>{
+app.get('/consultapedidos', async (req, res) => {
     await itempedido.findAll({
         //raw: true
         order: [['valor', 'DESC']]
-    }).then(function(ped){
+    }).then(function (ped) {
         res.json(ped)
     });
 });
 
-app.put('/atualizaservico', async(req, res)=>{
-    await servico.update(req.body,{
-        where: {id: req.body.id}
-    }).then(function(){
+app.put('/atualizaservico', async (req, res) => {
+    await servico.update(req.body, {
+        where: { id: req.body.id }
+    }).then(function () {
         return res.json({
             error: false,
             message: "Serviço alterado com sucesso."
         });
-    }).catch(function(erro){
+    }).catch(function (erro) {
         return res.status(400).json({
             error: true,
             message: "Erro: serviço não alterado."
@@ -190,42 +190,42 @@ app.put('/atualizaservico', async(req, res)=>{
 });
 //aula 11
 
-app.get('/pedidos/:id', async(req, res)=>{
-    await pedido.findByPk(req.params.id,{include:[{all: true}]})
-    .then(ped=>{
-        return res.json({ped});
-    });
+app.get('/pedidos/:id', async (req, res) => {
+    await pedido.findByPk(req.params.id, { include: [{ all: true }] })
+        .then(ped => {
+            return res.json({ ped });
+        });
 });
 //aula 12
 
-app.put('/pedidos/:id/editaritem', async(req, res)=>{
+app.put('/pedidos/:id/editaritem', async (req, res) => {
     const item = {
         quantidade: req.body.quantidade,
         valor: req.body.valor
     };
 
-    if(!await pedido.findByPk(req.params.id)){
+    if (!await pedido.findByPk(req.params.id)) {
         return res.status(400).json({
             error: true,
             message: 'Pedido não foi encontrado'
         });
     };
-    if(!await servico.findByPk(req.body.ServicoId)){
+    if (!await servico.findByPk(req.body.ServicoId)) {
         return res.status(400).json({
             error: true,
             message: 'Serviço não foi encontrado.'
         });
     };
 
-    await itempedido.update(item,{
-        where: Sequelize.and({ServicoId: req.body.ServicoId},
-            {PedidoId: req.params.id})
-    }).then(function(itens){
+    await itempedido.update(item, {
+        where: Sequelize.and({ ServicoId: req.body.ServicoId },
+            { PedidoId: req.params.id })
+    }).then(function (itens) {
         return res.json({
             error: false,
             message: "Pedido alterado com sucesso."
         });
-    }).catch(function(erro){
+    }).catch(function (erro) {
         return res.status(400).json({
             error: true,
             message: "Não foi possível alteração."
@@ -233,25 +233,27 @@ app.put('/pedidos/:id/editaritem', async(req, res)=>{
     });
 });
 //exercicio aula 12
-app.get('/listaservicosCli', async(req, res)=>{   
-        await servico.findByPk(req.body.ClienteId,{
-            where: {and:{pedido:{include:[{all:true}]}},
-                    servico: {include:[{all:true}]}}
-        }).then(cli=>{
-            return res.json({cli});
-        });
-        
+app.get('/listaservicosCli', async (req, res) => {
+    await servico.findByPk(req.body.ClienteId, {
+        where: {
+            and: { pedido: { include: [{ all: true }] } },
+            servico: { include: [{ all: true }] }
+        }
+    }).then(cli => {
+        return res.json({ cli });
     });
 
-app.put('/atualizacliente', async(req, res)=>{
-    await cliente.update(req.body,{
-        where: {id: req.body.id}
-    }).then(function(){
+});
+
+app.put('/atualizacliente', async (req, res) => {
+    await cliente.update(req.body, {
+        where: { id: req.body.id }
+    }).then(function () {
         return res.json({
             error: false,
             message: "Cliente alterado com sucesso."
         });
-    }).catch(function(erro){
+    }).catch(function (erro) {
         return res.status(400).json({
             error: true,
             message: "Erro: cliente não alterado."
@@ -259,15 +261,15 @@ app.put('/atualizacliente', async(req, res)=>{
     });
 });
 
-app.put('/atualizapedido', async(req, res)=>{
-    await pedido.update(req.body,{
-        where: {id: req.body.id}
-    }).then(function(){
+app.put('/atualizapedido', async (req, res) => {
+    await pedido.update(req.body, {
+        where: { id: req.body.id }
+    }).then(function () {
         return res.json({
             error: false,
             message: "Pedido alterado com sucesso."
         });
-    }).catch(function(erro){
+    }).catch(function (erro) {
         return res.status(400).json({
             error: true,
             message: "Erro: Pedido não alterado."
@@ -275,35 +277,248 @@ app.put('/atualizapedido', async(req, res)=>{
     });
 });
 
-app.get('/listapedidoscli', async(req, res)=>{    
-        await cliente.findByPk(req.body.ClienteId,{
-            where: {pedido:{include:[{all:true}]}}
-                    
-        }).then(ped=>{
-            return res.json({ped});
+app.get('/listapedidosCli', async (req, res) => {
+    await pedido.findAll({
+        where: { ClienteId: req.body.ClienteId }
+    }).then(ped => {
+        return res.json({ ped });
+    }).catch(function (erro) {
+        return res.status(400).json({
+            error: true,
+            message: ('Erro: Cliente não encontrado')
         });
-        
     });
+});
 //AULA 13
 
-app.get('/excluircliente/:id', async(req, res)=>{
+app.get('/excluircliente/:id', async (req, res) => {
     await cliente.destroy({
-       where: {id: req.params.id}
-    }). then(function(){
+        where: { id: req.params.id }
+    }).then(function () {
         return res.json({
             error: false,
             message: "O Cliente foi excluido com sucesso"
         });
-    }).catch(function(erro){
+    }).catch(function (erro) {
         return res.status(400).json({
             error: true,
             message: "Erro: Não foi possível excluir o cliente"
         });
     });
 });
+//      +-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+--+-
+//           ---------      ROTAS CICLO 4     ---------
+//      +-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+--+-
+
+app.get('/listarclientes', async (req, res) => {
+    await cliente.findAll({
+        raw: true
+        //order:[['nascimento','ASC']]        
+    }).then(function (clientes) {
+        res.json(clientes)
+    });
+});
+
+app.get('/listarservicos', async (req, res) => {
+    await servico.findAll({
+        raw: true
+        //order: [['nome', 'ASC']]
+    }).then(function (servicos) {
+        res.json(servicos)
+    });
+});
+
+app.get('/listapedidosCli/:id', async (req, res) => {
+    await pedido.findAll({
+        where: { ClienteId: req.params.id }
+    }).then(ped => {
+        return res.json({
+            error: false,
+            ped
+        });
+    }).catch(function (erro) {
+        return res.status(400).json({
+            error: true,
+            message: ('Erro: Cliente não encontrado')
+        });
+    });
+});
+
+app.get('/servico/:id/pedido', async (req, res) => {
+    await itempedido.findAll({
+        where: { ServicoId: req.params.id }
+    })
+        .then(item => {
+            return res.json({
+                error: false,
+                item
+            });
+        }).catch(function (erro) {
+            return res.status(400).json({
+                error: true,
+                message: "Não foi possível conectar."
+            });
+        });
+});
+
+app.get('/listarpedidos', async (req, res) => {
+    await pedido.findAll({
+        raw: true
+        //order: [['valor', 'DESC']]
+    }).then(function (ped) {
+        res.json(ped)
+    });
+});
+
+app.get('/pedidositem/:id', async (req, res) => {
+    await pedido.findByPk(req.params.id, { include: [{ all: true }] })
+        .then(ped => {
+            return res.json({ ped });
+        });
+});
+
+app.post('/clientes', async (req, res) => {
+    await cliente.create(
+        req.body
+    ).then(function () {
+        return res.json({
+            error: false,
+            message: "O cliente foi inserido com sucesso"
+        });
+    }).catch(function (error) {
+        return res.status(400).json({
+            error: true,
+            message: "Não foi possivel cadastrar o cliente "
+        });
+    });
+});
+
+app.post('/servicos', async (req, res) => {
+    await servico.create(
+        req.body
+    ).then(function () {
+        return res.json({
+            error: false,
+            message: 'Serviço criado com sucesso!'
+        })
+    }).catch(function (error) {
+        return res.status(400).json({
+            error: true,
+            message: 'Foi impossivel se conectar!'
+        })
+    });
+});
+
+app.post('/CadPedidoCli', async (req, res) => {
+    await pedido.create(
+        req.body
+    ).then(function () {
+        return res.json({
+            error: false,
+            message: 'Serviço criado com sucesso!'
+        })
+    }).catch(function (error) {
+        return res.status(400).json({
+            error: true,
+            message: 'Foi impossivel se conectar!'
+        })
+    });
+});
+
+app.post('/cliente/:id/pedido', async (req, res) => {
+    const ped = {
+        dataPedido: req.body,
+        ClienteId: req.params.id
+    };
+
+    if (!await cliente.findByPk(req.params.id)) {
+        return res.status(400).json({
+            error: true,
+            message: "Cliente não existe."
+        });
+    };
+
+    await pedido.create(ped)
+        .then(order => {
+            return res.json({
+                error: false,
+                message: "O pedido foi inserido com sucesso.",
+                order
+            });
+        }).catch(error => {
+            return res.status(400).json({
+                error: true,
+                message: "Não foi possível inserir o pedido."
+            });
+        });
+});
+
+app.post('/itempedido', async (req, res) => {
+    await itempedido.create(
+        req.body
+    ).then(function () {
+        return res.json({
+            error: false,
+            message: "O itempedido foi inserido com sucesso."
+        });
+    }).catch(function (error) {
+        return res.status(400).json({
+            error: true,
+            message: "Não foi possível inserir o item."
+        });
+    });
+});
+
+app.post('/pedido/item/:id', async (req, res) => {
+    const item = {        
+        PedidoId: req.params.id,
+        ServicoId: req.body.ServicoId,
+        quantidade: req.body.quantidade,
+        valor: req.body.valor
+    }
+
+    if (!await pedido.findByPk(req.params.id)) {
+        return res.status(400).json({
+            error: true,
+            message: "Pedido não existe."
+        });
+    };
+
+    await itempedido.create(item)
+        .then(order => {
+            return res.json({
+                error: false,
+                message: "O item foi inserido com sucesso.",
+                order
+            });
+        }).catch(error => {
+            return res.status(400).json({
+                error: true,
+                message: "Não foi possível inserir o pedido."
+            });
+        });
+});
+
+app.put('/editarcliente/:id', async (req, res) => {
+    await cliente.update(req.body, {
+        where: { id: req.params.id }
+    }).then(function () {
+        return res.json({
+            error: false,
+            message: "Cliente alterado com sucesso."
+        });
+    }).catch(function (erro) {
+        return res.status(400).json({
+            error: true,
+            message: "Erro: cliente não alterado."
+        });
+    });
+});
+
+
 
 let port = process.env.PORT || 3001;
 
-app.listen(port,(req,res)=>{
+app.listen(port, (req, res) => {
     console.log('Servido Ativo: http://localhost:3001');
 })
